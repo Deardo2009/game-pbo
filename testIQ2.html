@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test IQ Cyberpunk</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        /* === VARIABEL WARNA CYBERPUNK === */
+        :root {
+            --primary-color: #00f3ff;
+            --secondary-color: #ff003c;
+            --bg-color: #030305;
+            --text-color: #e0e0e0;
+            --glass-bg: rgba(10, 10, 15, 0.75);
+            --danger-color: #ff003c;
+            --success-color: #39ff14;
+            --grid-color: rgba(0, 243, 255, 0.4);
+        }
+
+        /* === RESET & FONT === */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Rajdhani', sans-serif;
+        }
+
+        body {
+            height: 100vh;
+            overflow: hidden;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            background-image: radial-gradient(circle at 50% 20%, #12051f 0%, var(--bg-color) 70%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: crosshair;
+        }
+
+        /* === ENHANCED CYBERPUNK BACKGROUND === */
+        body::before {
+            content: "";
+            position: absolute;
+            top: 40%;
+            left: 0; 
+            width: 100%; 
+            height: 200px;
+            background: radial-gradient(ellipse at 50% 50%, rgba(255, 0, 60, 0.25) 0%, rgba(0, 243, 255, 0.1) 40%, transparent 70%);
+            transform: translateY(-50%);
+            filter: blur(20px);
+            z-index: -2;
+            pointer-events: none;
+        }
+
+        .cyber-grid {
+            position: absolute;
+            bottom: 0;
+            left: -50%;
+            width: 200%;
+            height: 60vh;
+            background-image: 
+                linear-gradient(var(--grid-color) 2px, transparent 2px),
+                linear-gradient(90deg, var(--grid-color) 2px, transparent 2px);
+            background-size: 50px 50px;
+            transform-origin: top;
+            transform: perspective(600px) rotateX(75deg);
+            animation: gridMove 2s linear infinite;
+            z-index: -3;
+            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 60%);
+            mask-image: linear-gradient(to bottom, transparent 0%, black 60%);
+            box-shadow: inset 0 100px 100px rgba(0, 243, 255, 0.1);
+        }
+
+        @keyframes gridMove {
+            0% { background-position: 0 0; }
+            100% { background-position: 0 50px; }
+        }
+
+        .scanlines {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(
+                to bottom,
+                rgba(255, 255, 255, 0),
+                rgba(255, 255, 255, 0) 50%,
+                rgba(0, 0, 0, 0.25) 50%,
+                rgba(0, 0, 0, 0.25)
+            );
+            background-size: 100% 4px;
+            z-index: 20;
+            pointer-events: none;
+            animation: scanMove 0.5s linear infinite;
+        }
+
+        @keyframes scanMove {
+            0% { background-position: 0 0; }
+            100% { background-position: 0 40px; }
+        }
+
+        .vignette {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at center, transparent 40%, rgba(2, 2, 5, 0.85) 100%);
+            z-index: 15;
+            pointer-events: none;
+        }
+
+        /* === GLOBAL CLICK ANIMATION === */
+        .click-ripple {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--secondary-color);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            animation: glitchRipple 0.5s ease-out forwards;
+            z-index: 9999;
+            box-shadow: 0 0 20px var(--secondary-color), inset 0 0 10px var(--secondary-color);
+        }
+
+        @keyframes glitchRipple {
+            0% { width: 0px; height: 0px; opacity: 1; border-width: 4px; }
+            100% { width: 120px; height: 120px; opacity: 0; border-width: 0px; }
+        }
+
+        /* === CYBERPUNK UI === */
+        .game-container {
+            position: relative;
+            z-index: 30;
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(0, 243, 255, 0.5);
+            border-top: 3px solid var(--primary-color);
+            border-bottom: 3px solid var(--secondary-color);
+            border-radius: 4px;
+            padding: 40px;
+            width: 90%;
+            max-width: 650px;
+            text-align: center;
+            box-shadow: 0 0 40px rgba(0, 243, 255, 0.15), inset 0 0 20px rgba(0, 0, 0, 0.5);
+            clip-path: polygon(0 15px, 15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%);
+        }
+
+        .game-container::after {
+            content: "ID: 1Q-T3ST";
+            position: absolute;
+            bottom: 5px;
+            right: 25px;
+            font-size: 0.6rem;
+            color: var(--primary-color);
+            letter-spacing: 2px;
+            opacity: 0.7;
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            text-shadow: 0 0 10px var(--primary-color), 0 0 20px var(--primary-color), 3px 3px 0px var(--secondary-color);
+        }
+
+        p.subtitle {
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+            color: var(--text-color);
+            letter-spacing: 2px;
+            border-left: 3px solid var(--secondary-color);
+            padding-left: 10px;
+            display: inline-block;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+        }
+
+        .btn {
+            background: rgba(0, 243, 255, 0.05);
+            border: 1px solid var(--primary-color);
+            color: var(--primary-color);
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            font-family: 'Orbitron', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            font-weight: bold;
+            text-transform: uppercase;
+            width: 100%;
+            margin-bottom: 15px;
+            position: relative;
+            clip-path: polygon(5% 0, 100% 0, 100% 70%, 95% 100%, 0 100%, 0 30%);
+        }
+
+        .btn:hover {
+            background: var(--primary-color);
+            color: var(--bg-color);
+            box-shadow: 0 0 25px var(--primary-color);
+            transform: translateY(-2px);
+        }
+
+        /* === LAYAR PERMAINAN === */
+        .screen { display: none; }
+        .screen.active { display: block; animation: glitchIn 0.4s steps(4); }
+
+        @keyframes glitchIn {
+            0% { opacity: 0; transform: translate(10px, 10px); filter: hue-rotate(90deg) drop-shadow(0 0 20px red); }
+            20% { opacity: 0.5; transform: translate(-10px, -5px); }
+            40% { transform: translate(5px, 2px); }
+            100% { opacity: 1; transform: translate(0,0); filter: hue-rotate(0deg); }
+        }
+
+        .hud {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-bottom: 1px solid rgba(0, 243, 255, 0.3);
+            padding-bottom: 10px;
+            font-family: 'Orbitron', sans-serif;
+            text-shadow: 0 0 5px var(--primary-color);
+        }
+
+        #question-text {
+            font-size: 1.4rem;
+            margin-bottom: 30px;
+            line-height: 1.4;
+            min-height: 90px;
+            text-align: left;
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.2);
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .option-btn {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(0, 243, 255, 0.3);
+            padding: 15px;
+            color: white;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .option-btn:hover {
+            border-color: var(--primary-color);
+            background: rgba(0, 243, 255, 0.15);
+            transform: translateX(10px);
+            box-shadow: -5px 0 0 var(--primary-color), 0 0 15px rgba(0, 243, 255, 0.3);
+        }
+
+        .option-btn.correct { background: var(--success-color) !important; color: black; box-shadow: 0 0 20px var(--success-color), inset 0 0 10px rgba(255,255,255,0.5); font-weight: bold; }
+        .option-btn.wrong { background: var(--danger-color) !important; color: white; box-shadow: 0 0 20px var(--danger-color); }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(255,255,255,0.05);
+            margin-top: 25px;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--primary-color);
+            width: 100%;
+            transition: width 1s linear, background-color 0.3s;
+            box-shadow: 0 0 15px var(--primary-color);
+        }
+
+        .particle {
+            position: absolute;
+            background: var(--primary-color);
+            width: 2px;
+            border-radius: 50%;
+            z-index: -1;
+            animation: rain linear infinite;
+            box-shadow: 0 0 10px var(--primary-color), 0 0 20px rgba(0, 243, 255, 0.5);
+            opacity: 0.8;
+        }
+
+        @keyframes rain {
+            0% { transform: translateY(-100vh); opacity: 0; }
+            20% { opacity: 1; }
+            80% { opacity: 1; }
+            100% { transform: translateY(100vh); opacity: 0; }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-10px); }
+            40%, 80% { transform: translateX(10px); }
+        }
+
+        .shake-error {
+            animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
+        }
+
+        .typing-cursor::after {
+            content: "|";
+            animation: blink 0.7s infinite;
+            color: var(--primary-color);
+        }
+
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="cyber-grid"></div>
+    <div class="vignette"></div>
+    <div class="scanlines"></div>
+    <div class="particles" id="particles"></div>
+
+    <audio id="bgm" loop>
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="game-container">
+        <div id="start-screen" class="screen active">
+            <h1>COGNITIVE IQ TEST</h1>
+            <p class="subtitle">SYSTEM INITIALIZED</p>
+            <button class="btn" onclick="startGame()">[ START ASSESSMENT ]</button>
+            <p style="font-size: 0.8rem; opacity: 0.6; margin-top: 20px; color: var(--primary-color); text-transform: uppercase;">Perhatian: Skor dihitung dari akurasi & kecepatan menjawab.</p>
+        </div>
+
+        <div id="game-screen" class="screen">
+            <div class="hud">
+                <div>PTS: <span id="score" style="color: var(--secondary-color)">0</span></div>
+                <div>NODE: <span id="level-indicator">1/30</span></div>
+            </div>
+            <div id="question-text">Memuat protokol...</div>
+            <div class="options-grid" id="options-container"></div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="timer-bar"></div>
+            </div>
+            <p style="margin-top: 10px; font-size: 1rem; font-family: 'Orbitron'; color: var(--primary-color);">TIME: <span id="time-text" style="color: #fff;">15</span>s</p>
+        </div>
+
+        <div id="end-screen" class="screen">
+            <h1 style="color: var(--secondary-color); text-shadow: 0 0 20px var(--secondary-color);">TEST COMPLETE</h1>
+            <p class="subtitle" id="final-message" style="border-left-color: var(--primary-color);">Mengkalkulasi tingkat kecerdasan...</p>
+            <h2 style="font-size: 4.5rem; margin-bottom: 20px; font-family: 'Orbitron'; text-shadow: 0 0 30px var(--primary-color);" id="final-score">IQ: 0</h2>
+            <button class="btn" onclick="resetGame()">[ RETEST SYSTEM ]</button>
+        </div>
+    </div>
+
+    <script>
+        let currentQuestionIndex = 0;
+        let score = 0; // Raw points
+        let correctAnswersCount = 0; // Untuk kalkulasi IQ
+        let totalTimeBonus = 0; // Untuk kalkulasi ekstra IQ
+        let timer;
+        let timeLeft = 15;
+        let isAcceptingAnswers = false;
+        
+        // 30 Pertanyaan berbasis logika, deret, pola kata, dan matematika (Standar Tes IQ)
+        const questionBank = [
+            { question: "Lengkapi deret angka berikut: 2, 4, 8, 16, ...", options: ["24", "32", "30", "64"], answer: 1 },
+            { question: "Analogi Kata - Siang : Matahari = Malam : ...", options: ["Gelap", "Bintang", "Bulan", "Tidur"], answer: 2 },
+            { question: "Kata mana yang tidak termasuk dalam kelompoknya?", options: ["Biola", "Gitar", "Piano", "Seruling"], answer: 3 },
+            { question: "Lengkapi deret angka: 1, 1, 2, 3, 5, 8, ...", options: ["11", "12", "13", "15"], answer: 2 },
+            { question: "Jika 5 mesin membuat 5 alat dalam 5 menit, berapa lama 100 mesin membuat 100 alat?", options: ["100 menit", "5 menit", "50 menit", "1 menit"], answer: 1 },
+            { question: "Berapa 20% dari 150?", options: ["20", "30", "40", "50"], answer: 1 },
+            { question: "Analogi Kata - Kertas : Pohon = Kaca : ...", options: ["Jendela", "Pasir", "Batu", "Bening"], answer: 1 },
+            { question: "Lengkapi deret huruf berikut: A, C, E, G, ...", options: ["H", "I", "J", "K"], answer: 1 },
+            { question: "Semua mahasiswa harus berdasi. Budi adalah mahasiswa. Kesimpulannya?", options: ["Budi punya dasi", "Budi harus berdasi", "Budi suka berdasi", "Belum tentu berdasi"], answer: 1 },
+            { question: "Sebuah meja persegi panjang dipotong salah satu sudutnya. Berapa jumlah sudutnya sekarang?", options: ["3", "4", "5", "6"], answer: 2 },
+            { question: "Ayah Budi punya 5 anak: Nana, Nene, Nini, Nono, dan ...", options: ["Nunu", "Budi", "Nani", "Nano"], answer: 1 },
+            { question: "Lengkapi deret angka: 3, 9, 27, 81, ...", options: ["162", "243", "324", "100"], answer: 1 },
+            { question: "Analogi Profesi - Dokter : Resep = Koki : ...", options: ["Makanan", "Dapur", "Menu", "Panci"], answer: 2 },
+            { question: "Lengkapi deret: 100, 90, 81, 73, ...", options: ["64", "65", "66", "67"], answer: 2 }, // -10, -9, -8, -7
+            { question: "Sinonim dari INFERENSI adalah?", options: ["Dugaan", "Kesimpulan", "Pengaruh", "Campur Tangan"], answer: 1 },
+            { question: "Umur Ayah 3 kali umur Budi. Selisih umur mereka 20 tahun. Umur Budi adalah?", options: ["10 tahun", "15 tahun", "20 tahun", "30 tahun"], answer: 0 },
+            { question: "Lengkapi deret angka: 2, 5, 10, 17, 26, ...", options: ["35", "36", "37", "39"], answer: 2 }, // +3, +5, +7, +9, +11
+            { question: "Jika hari ini hujan, saya bawa payung. Saya tidak bawa payung. Kesimpulannya?", options: ["Hari ini cerah", "Hari ini tidak hujan", "Payung hilang", "Saya malas"], answer: 1 },
+            { question: "Hasil dari 3/4 + 1/8 adalah?", options: ["4/12", "7/8", "5/8", "1/2"], answer: 1 },
+            { question: "Kata mana yang tidak sekelompok?", options: ["Beras", "Gandum", "Jagung", "Kedelai"], answer: 3 }, // Kacang-kacangan vs Serealia
+            { question: "Lengkapi deret huruf: Z, X, V, T, ...", options: ["S", "R", "Q", "P"], answer: 1 }, // Loncat mundur 1 huruf
+            { question: "Antonim dari OTOKRATIS adalah?", options: ["Otoriter", "Demokratis", "Monarki", "Bebas"], answer: 1 },
+            { question: "Barang dibeli seharga Rp50.000 dijual Rp60.000. Berapa persen keuntungannya?", options: ["10%", "15%", "20%", "25%"], answer: 2 },
+            { question: "Pola berulang: M-A-T-A-M-A-T-A... Huruf ke-15 adalah?", options: ["M", "A", "T", "O"], answer: 2 },
+            { question: "Analogi Kata - Es : Dingin = Api : ...", options: ["Merah", "Terang", "Panas", "Membakar"], answer: 2 },
+            { question: "Lengkapi deret kuadrat: 1, 4, 9, 16, 25, ...", options: ["30", "35", "36", "49"], answer: 2 },
+            { question: "Antonim dari kata PROMINEN adalah?", options: ["Terkemuka", "Biasa", "Penting", "Mewah"], answer: 1 },
+            { question: "Budi antri di urutan ke-3 dari depan dan ke-3 dari belakang. Berapa total orang dalam antrian?", options: ["5", "6", "7", "4"], answer: 0 },
+            { question: "Kecepatan mobil 60 km/jam. Jarak yang ditempuh dalam 90 menit adalah?", options: ["60 km", "80 km", "90 km", "100 km"], answer: 2 },
+            { question: "Manakah yang paling berat?", options: ["10kg Besi", "10kg Kapas", "Sama Berat", "Tergantung Gravitasi"], answer: 2 }
+        ];
+
+        let shuffledQuestions = [];
+
+        const startScreen = document.getElementById('start-screen');
+        const gameScreen = document.getElementById('game-screen');
+        const endScreen = document.getElementById('end-screen');
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const scoreElement = document.getElementById('score');
+        const levelIndicator = document.getElementById('level-indicator');
+        const timerBar = document.getElementById('timer-bar');
+        const timeText = document.getElementById('time-text');
+        const finalScoreElement = document.getElementById('final-score');
+        const finalMessageElement = document.getElementById('final-message');
+        const bgm = document.getElementById('bgm');
+
+        function startGame() {
+            bgm.volume = 0.3;
+            bgm.play().catch(e => console.log("Audio play blocked"));
+            score = 0;
+            correctAnswersCount = 0;
+            totalTimeBonus = 0;
+            currentQuestionIndex = 0;
+            scoreElement.innerText = score;
+            
+            // Acak pertanyaan setiap kali main
+            shuffledQuestions = [...questionBank].sort(() => Math.random() - 0.5);
+            
+            startScreen.classList.remove('active');
+            endScreen.classList.remove('active');
+            gameScreen.classList.add('active');
+            loadQuestion();
+        }
+
+        async function typeWriter(text) {
+            questionText.innerHTML = '';
+            questionText.classList.add('typing-cursor');
+            isAcceptingAnswers = false;
+
+            for (let i = 0; i < text.length; i++) {
+                questionText.innerHTML += text.charAt(i);
+                await new Promise(resolve => setTimeout(resolve, 20)); // Dipercepat sedikit karena soal lebih banyak
+            }
+            
+            questionText.classList.remove('typing-cursor');
+            isAcceptingAnswers = true;
+            startTimer();
+        }
+
+        async function loadQuestion() {
+            if (currentQuestionIndex >= shuffledQuestions.length) {
+                endGame();
+                return;
+            }
+            
+            const currentQ = shuffledQuestions[currentQuestionIndex];
+            // Format dinamis: "1/30"
+            levelIndicator.innerText = `${currentQuestionIndex + 1}/${shuffledQuestions.length}`;
+            optionsContainer.innerHTML = '';
+            
+            currentQ.options.forEach((option, index) => {
+                const button = document.createElement('button');
+                button.innerText = option;
+                button.classList.add('option-btn');
+                button.dataset.number = index;
+                button.style.opacity = '0'; 
+                button.addEventListener('click', selectAnswer);
+                optionsContainer.appendChild(button);
+            });
+
+            resetTimer();
+            await typeWriter(currentQ.question);
+            
+            const buttons = optionsContainer.querySelectorAll('.option-btn');
+            buttons.forEach((btn, i) => {
+                setTimeout(() => {
+                    btn.style.opacity = '1';
+                    btn.style.transform = 'translateY(0)';
+                }, i * 100);
+            });
+        }
+
+        function selectAnswer(e) {
+            if (!isAcceptingAnswers) return;
+            isAcceptingAnswers = false;
+            clearInterval(timer);
+            
+            const selectedBtn = e.target;
+            const selectedAnswer = parseInt(selectedBtn.dataset.number);
+            const currentQ = shuffledQuestions[currentQuestionIndex];
+            const container = document.querySelector('.game-container');
+
+            if (selectedAnswer === currentQ.answer) {
+                selectedBtn.classList.add('correct');
+                
+                // Track untuk logic IQ
+                correctAnswersCount++;
+                totalTimeBonus += timeLeft;
+                
+                // Track raw score untuk UI HUD
+                score += 10 + timeLeft;
+                scoreElement.innerText = score;
+                
+                selectedBtn.style.boxShadow = "0 0 30px var(--success-color)";
+            } else {
+                selectedBtn.classList.add('wrong');
+                container.classList.add('shake-error');
+                setTimeout(() => container.classList.remove('shake-error'), 400);
+
+                const correctBtn = optionsContainer.querySelector(`[data-number="${currentQ.answer}"]`);
+                if(correctBtn) correctBtn.classList.add('correct');
+            }
+
+            setTimeout(() => {
+                currentQuestionIndex++;
+                loadQuestion();
+            }, 1200); // Sedikit dipercepat pergantiannya
+        }
+
+        function startTimer() {
+            timeLeft = 15;
+            timeText.innerText = timeLeft;
+            timerBar.style.width = '100%';
+            timer = setInterval(() => {
+                timeLeft--;
+                timeText.innerText = timeLeft;
+                const percentage = (timeLeft / 15) * 100;
+                timerBar.style.width = `${percentage}%`;
+                
+                if (timeLeft <= 5) {
+                    timerBar.style.background = 'var(--danger-color)';
+                    timerBar.style.boxShadow = '0 0 15px var(--danger-color)';
+                } else {
+                    timerBar.style.background = 'var(--primary-color)';
+                    timerBar.style.boxShadow = '0 0 15px var(--primary-color)';
+                }
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    isAcceptingAnswers = false;
+                    const currentQ = shuffledQuestions[currentQuestionIndex];
+                    const correctBtn = optionsContainer.querySelector(`[data-number="${currentQ.answer}"]`);
+                    if(correctBtn) correctBtn.classList.add('correct');
+                    setTimeout(() => {
+                        currentQuestionIndex++;
+                        loadQuestion();
+                    }, 1200);
+                }
+            }, 1000);
+        }
+
+        function resetTimer() {
+            clearInterval(timer);
+            timerBar.style.width = '100%';
+            timerBar.style.background = 'var(--primary-color)';
+            timerBar.style.boxShadow = '0 0 15px var(--primary-color)';
+        }
+
+        function endGame() {
+            clearInterval(timer);
+            gameScreen.classList.remove('active');
+            endScreen.classList.add('active');
+            
+            // === KALKULASI SISTEM IQ ===
+            // Base IQ = 65 (Jika menjawab salah semua). 
+            // Jawaban benar bernilai ~2.5 poin IQ. 
+            // Waktu cepat memberi sedikit bonus fraksional.
+            let calculatedIQ = 65 + (correctAnswersCount * 2.5) + (totalTimeBonus * 0.04);
+            calculatedIQ = Math.round(calculatedIQ);
+
+            // Menampilkan angka IQ
+            finalScoreElement.innerText = "IQ: " + calculatedIQ;
+            
+            // Evaluasi berdasarkan range IQ klinis standar
+            if (calculatedIQ >= 130) {
+                finalMessageElement.innerText = "VERY SUPERIOR (GENIUS) 🧠⚡";
+                finalMessageElement.style.color = "var(--primary-color)";
+            } else if (calculatedIQ >= 115) {
+                finalMessageElement.innerText = "SUPERIOR (HIGH INTELLECT) 🦾";
+                finalMessageElement.style.color = "var(--primary-color)";
+            } else if (calculatedIQ >= 90) {
+                finalMessageElement.innerText = "AVERAGE (NORMAL) 🌐";
+                finalMessageElement.style.color = "#fff";
+            } else if (calculatedIQ >= 80) {
+                finalMessageElement.innerText = "BELOW AVERAGE ⚠️";
+                finalMessageElement.style.color = "yellow";
+            } else {
+                finalMessageElement.innerText = "SYSTEM ERROR. COGNITIVE LOW. 🚫";
+                finalMessageElement.style.color = "var(--danger-color)";
+            }
+        }
+
+        function resetGame() { startGame(); }
+
+        // Efek Partikel Background
+        function createParticles() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 40; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                particle.style.height = `${Math.random() * 80 + 20}px`;
+                particle.style.left = `${Math.random() * 100}vw`;
+                particle.style.animationDuration = `${Math.random() * 2 + 1}s`;
+                particle.style.animationDelay = `${Math.random() * 2}s`;
+                particle.style.opacity = Math.random() * 0.8 + 0.2; 
+                container.appendChild(particle);
+            }
+        }
+        window.onload = createParticles;
+
+        // Suara Klik & Ripple Efek
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playClickSound() {
+            if(audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            osc.type = 'square';
+            osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(50, audioCtx.currentTime + 0.1);
+            gainNode.gain.setValueAtTime(0.05, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+            osc.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.1);
+        }
+
+        document.addEventListener('click', function(e) {
+            playClickSound();
+            const ripple = document.createElement('div');
+            ripple.classList.add('click-ripple');
+            ripple.style.left = `${e.clientX}px`;
+            ripple.style.top = `${e.clientY}px`;
+            document.body.appendChild(ripple);
+            setTimeout(() => ripple.remove(), 500);
+        });
+    </script>
+</body>
+</html>
